@@ -1,0 +1,631 @@
+
+<!DOCTYPE html>
+<html lang="pl" data-theme="light">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Centrum-MED - Profesjonalna Medycyna Pracy</title>
+    <meta name="description" content="Centrum-MED oferuje kompleksowe badania i konsultacje medyczne dla pracowników. Zapewniamy szybką realizację, pełną legalność i brak kolejek."/>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@latest/dist/full.css" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
+    <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+	<script src="https://cdn.jsdelivr.net/npm/countup.js@2.0.7/dist/countUp.umd.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#049098',
+                        secondary: '#df4041',
+                        tertiary: '#f59e0b',
+                    },
+                    fontFamily: {
+                        'sans': ['Poppins', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+        }
+        .fade-in {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        }
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .hero-pattern {
+            background-color: #f8fafc;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Cg fill-rule='evenodd'%3E%3Cg fill='%23049098' fill-opacity='0.05'%3E%3Cpath d='M0 38.59l2.83-2.83 1.41 1.41L1.41 40H0v-1.41zM0 1.4l2.83 2.83 1.41-1.41L1.41 0H0v1.41zM38.59 40l-2.83-2.83 1.41-1.41L40 38.59V40h-1.41zM40 1.41l-2.83 2.83-1.41-1.41L38.59 0H40v1.41zM20 18.6l2.83-2.83 1.41 1.41L21.41 20l2.83 2.83-1.41 1.41L20 21.41l-2.83 2.83-1.41-1.41L18.59 20l-2.83-2.83 1.41-1.41L20 18.59z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+        .arrow {
+            position: fixed;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 2rem;
+            cursor: pointer;
+            animation: bounce 2s infinite;
+            z-index: 100;
+        }
+        .arrow-up {
+            top: 20px;
+        }
+        .arrow-down {
+            bottom: 20px;
+        }
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateX(-50%) translateY(0);
+            }
+            40% {
+                transform: translateX(-50%) translateY(-10px);
+            }
+            60% {
+                transform: translateX(-50%) translateY(-5px);
+            }
+        }
+        .faq-item summary::-webkit-details-marker {
+            display: none;
+        }
+        .faq-item summary, .hover-effect {
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .faq-item summary:hover, .hover-effect:hover {
+            background-color: rgba(4, 144, 152, 0.1);
+            transform: translateY(-2px);
+        }
+        .faq-item[open] summary {
+            background-color: rgba(4, 144, 152, 0.1);
+        }
+        .content-section {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 64px 0;
+        }
+        .swiper-slide {
+            transition: all 0.3s ease;
+            opacity: 0.7;
+            transform: scale(0.8);
+        }
+        .swiper-slide-active {
+            opacity: 1;
+            transform: scale(1);
+        }
+        .swiper-slide-prev, .swiper-slide-next {
+            opacity: 0.7;
+            transform: scale(0.9);
+        }
+        .parallax-bg {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 130%;
+            height: 100%;
+            -webkit-background-size: cover;
+            background-size: cover;
+            background-position: center;
+        }
+    </style>
+</head>
+<body class="bg-white text-gray-800">
+    <div id="reading-progress">
+        <div id="reading-bar"></div>
+    </div>
+	
+	    <!-- Powiadomienie o aktywności -->
+    <div id="activity-notification" 
+         class="fixed bottom-4 left-4 bg-white p-4 rounded-lg shadow-lg z-50 activity-notification">
+        <p class="text-sm">
+            <span class="font-bold">🔥 Właśnie teraz:</span> 
+            <span id="notification-text"></span>
+        </p>
+    </div>
+	
+	    <!-- Mobile CTA -->
+    <div class="fixed bottom-0 left-0 w-full bg-white shadow-lg p-4 md:hidden z-50">
+        <div class="flex space-x-4">
+            <a href="tel:+48603442848" 
+               class="flex-1 btn bg-secondary text-white hover-effect">
+                <i class="fas fa-phone-alt mr-2"></i>
+                Zadzwoń teraz
+            </a>
+            <a href="#formularz" 
+               class="flex-1 btn bg-primary text-white hover-effect">
+                <i class="fas fa-calendar-alt mr-2"></i>
+                Umów wizytę
+            </a>
+        </div>
+    </div>
+	
+	
+    <div class="drawer">
+        <input id="my-drawer-3" type="checkbox" class="drawer-toggle" /> 
+        <div class="drawer-content flex flex-col">
+            <!-- Navbar -->
+            <div class="w-full navbar bg-white shadow-md sticky top-0 z-50">
+                <div class="flex-none lg:hidden">
+                    <label for="my-drawer-3" class="btn btn-square btn-ghost">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="inline-block w-6 h-6 stroke-current"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+                    </label>
+                </div> 
+                <div class="flex-1 px-2 mx-2">
+                    <span class="text-2xl font-bold text-primary">Centrum-MED</span>
+                </div>
+                <div class="flex-none hidden lg:block">
+                    <ul class="menu menu-horizontal">
+                        <li><a class="btn btn-ghost hover-effect" href="#home">Strona Główna</a></li>
+                        <li><a class="btn btn-ghost hover-effect" href="#uslugi">Usługi</a></li>
+                        <li><a class="btn btn-ghost hover-effect" href="#klienci">Klienci</a></li>
+                        <li><a class="btn btn-ghost hover-effect" href="#o-nas">O Nas</a></li>
+                        <li><a class="btn btn-ghost hover-effect" href="#faq">FAQ</a></li>
+                        <li><a class="btn btn-ghost hover-effect" href="#kontakt">Kontakt</a></li>
+                        <li><a class="btn bg-secondary text-white hover:bg-secondary-focus hover-effect" href="#rejestracja">Zarejestruj Firmę</a></li>
+                    </ul>
+                </div>
+            </div>
+            <!-- Page content here -->
+            <div class="snap-y snap-mandatory overflow-y-scroll h-screen">
+              <section id="home" class="hero min-h-screen hero-pattern snap-start fade-in content-section">
+                    <div class="hero-content flex-col lg:flex-row max-w-7xl mx-auto py-10">
+                        <div class="lg:w-1/2 lg:pr-8 text-center lg:text-left">
+                            <h1 class="text-5xl font-bold mb-6">
+                                Profesjonalna <span class="text-primary">Medycyna Pracy</span> 
+                                dla Twojej Firmy
+                            </h1>
+                            <p class="py-6 text-lg">
+                                Centrum-MED oferuje kompleksowe badania i konsultacje medyczne 
+                                dla pracowników. Zapewniamy szybką realizację, pełną legalność 
+                                i brak kolejek.
+                            </p>
+
+                            <!-- Licznik promocji -->
+                            <div class="bg-red-100 p-4 rounded-lg text-center mb-6">
+                                <p class="text-red-600 font-bold">
+                                    ⏰ Promocja kończy się za: <span id="countdown">--:--:--</span>
+                                </p>
+                            </div>
+
+                            <!-- Statystyki -->
+                            <div class="mt-8 grid grid-cols-3 gap-4">
+                                <div class="text-center">
+                                    <p class="text-4xl font-bold text-primary" id="years-count">0</p>
+                                    <p class="text-sm">Lat Doświadczenia</p>
+                                </div>
+                                <div class="text-center">
+                                    <p class="text-4xl font-bold text-primary" id="doctors-count">0</p>
+                                    <p class="text-sm">Profesjonalnych Lekarzy</p>
+                                </div>
+                                <div class="text-center">
+                                    <p class="text-4xl font-bold text-primary" id="clients-count">0</p>
+                                    <p class="text-sm">Zadowolonych Klientów</p>
+                                </div>
+                            </div>
+
+                            <!-- CTA Buttons -->
+                            <div class="flex flex-col sm:flex-row gap-4 mt-8 justify-center lg:justify-start">
+                                <a class="btn bg-primary text-white hover:bg-primary-focus hover:scale-105 
+                                          transition-all duration-300" href="#uslugi">
+                                    Poznaj Nasze Usługi
+                                </a>
+                                <a class="btn bg-tertiary text-white hover:bg-tertiary-focus hover:scale-105 
+                                          transition-all duration-300" href="#kontakt">
+                                    Umów Wizytę
+                                </a>
+                            </div>
+
+                            <!-- Google Reviews -->
+                            <div class="mt-8 bg-white p-4 rounded-lg shadow-md">
+                                <div class="flex items-center mb-2">
+                                    <img src="https://www.google.com/favicon.ico" alt="Google Logo" 
+                                         class="w-6 h-6 mr-2"/>
+                                    <span class="font-semibold">Google Opinie</span>
+                                </div>
+                                <div class="flex items-center">
+                                    <div class="text-yellow-400 flex">
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star-half-alt"></i>
+                                    </div>
+                                    <span class="ml-2 text-gray-600">4.8/5 (120 opinii)</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Formularz rejestracji -->
+                        <div class="lg:w-1/2 mt-10 lg:mt-0">
+                            <div class="card bg-base-100 shadow-xl max-w-md mx-auto">
+                                <div class="card-body">
+                                    <h2 class="card-title">Szybka Rejestracja</h2>
+                                    <form id="registration-form" class="space-y-4">
+                                        <div class="form-control">
+                                            <input type="tel" 
+                                                   placeholder="Twój numer telefonu" 
+                                                   class="input input-bordered w-full"
+                                                   pattern="[0-9]{9}"
+                                                   title="Wprowadź 9-cyfrowy numer telefonu"
+                                                   required />
+                                            <div class="text-xs text-gray-500 mt-1">
+                                                Format: 123456789
+                                            </div>
+                                        </div>
+                                        <button class="btn bg-secondary text-white w-full hover:bg-secondary-focus 
+                                                       transform hover:scale-105 transition-all duration-300">
+                                            Umów się teraz! 
+                                            <span class="ml-2">🎯</span>
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+				
+
+
+                <section id="klienci" class="bg-gray-50 py-20 fade-in snap-start min-h-screen flex items-center justify-center">
+                    <div class="container mx-auto text-center px-4">
+                        <h2 class="text-4xl font-bold text-gray-800 mb-8">Opinie Klientów</h2>
+                        <p class="text-xl text-gray-600 mb-12">Nasze usługi są doceniane przez wielu klientów. Oto, co mówią o nas:</p>
+                        <div class="swiper-container">
+                            <div class="parallax-bg" style="background-image:url(https://www.tailwindai.dev/placeholder.svg)" data-swiper-parallax="-23%"></div>
+                            <div class="swiper-wrapper">
+                                <div class="swiper-slide">
+                                    <div class="bg-white p-6 rounded-lg shadow-md">
+                                        <p class="text-lg mb-4">"Świetnie! Bardzo dokładnie i na czas!"</p>
+                                        <p class="font-bold">- Amazon</p>
+                                        <div class="flex justify-center mt-2">
+                                            <i class="fas fa-star text-yellow-400"></i>
+                                            <i class="fas fa-star text-yellow-400"></i>
+                                            <i class="fas fa-star text-yellow-400"></i>
+                                            <i class="fas fa-star text-yellow-400"></i>
+                                            <i class="fas fa-star text-yellow-400"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="swiper-slide">
+                                    <div class="bg-white p-6 rounded-lg shadow-md">
+                                        <p class="text-lg mb-4">"Profesjonalna obsługa i szybkie terminy."</p>
+                                        <p class="font-bold">- NBC</p>
+                                        <div class="flex justify-center mt-2">
+                                            <i class="fas fa-star text-yellow-400"></i>
+                                            <i class="fas fa-star text-yellow-400"></i>
+                                            <i class="fas fa-star text-yellow-400"></i>
+                                            <i class="fas fa-star text-yellow-400"></i>
+                                            <i class="fas fa-star-half-alt text-yellow-400"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="swiper-slide">
+                                    <div class="bg-white p-6 rounded-lg shadow-md">
+                                        <p class="text-lg mb-4">"Zawsze na czas i bardzo dokładnie."</p>
+                                        <p class="font-bold">- Google</p>
+                                        <div class="flex justify-center mt-2">
+                                            <i class="fas fa-star text-yellow-400"></i>
+                                            <i class="fas fa-star text-yellow-400"></i>
+                                            <i class="fas fa-star text-yellow-400"></i>
+                                            <i class="fas fa-star text-yellow-400"></i>
+                                            <i class="fas fa-star text-yellow-400"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="swiper-button-next"></div>
+                            <div class="swiper-button-prev"></div>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="o-nas" class="bg-white py-20 fade-in snap-start content-section">
+                    <div class="container mx-auto px-4">
+                        <h2 class="text-4xl font-bold text-center text-gray-800 mb-12">O Nas</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
+                            <div>
+                                <h3 class="text-2xl font-semibold text-primary mb-4">Nasza Misja</h3>
+                                <p class="text-gray-600 mb-6">
+                                    W Centrum-MED naszą misją jest zapewnienie najwyższej jakości usług medycyny pracy, dbając o zdrowie i bezpieczeństwo pracowników oraz wspierając rozwój firm naszych klientów.
+                                </p>
+                                <ul class="space-y-2">
+                                    <li class="flex items-center">
+                                        <i class="fas fa-check-circle text-primary mr-2"></i>
+                                        <span>21 lat doświadczenia w medycynie pracy</span>
+                                    </li>
+                                    <li class="flex items-center">
+                                        <i class="fas fa-check-circle text-primary mr-2"></i>
+                                        <span>19 profesjonalnych lekarzy specjalistów</span>
+                                    </li>
+                                    <li class="flex items-center">
+                                        <i class="fas fa-check-circle text-primary mr-2"></i>
+                                        <span>Ponad 5000 zadowolonych klientów</span>
+                                    </li>
+                                    <li class="flex items-center">
+                                        <i class="fas fa-check-circle text-primary mr-2"></i>
+                                        <span>Nowoczesne metody diagnostyczne</span>
+                                    </li>
+                                    <li class="flex items-center">
+                                        <i class="fas fa-check-circle text-primary mr-2"></i>
+                                        <span>Indywidualne podejście do każdego pacjenta</span>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div>
+                                <h3 class="text-2xl font-semibold text-primary mb-4">Dlaczego My?</h3>
+                                <div class="space-y-4">
+                                    <div class="flex items-center hover-effect p-2 rounded">
+                                        <i class="fas fa-medal text-secondary mr-3 text-2xl"></i>
+                                        <p>Kompleksowa opieka medyczna dla firm</p>
+                                    </div>
+                                    <div class="flex items-center hover-effect p-2 rounded">
+                                        <i class="fas fa-clock text-secondary mr-3 text-2xl"></i>
+                                        <p>Szybkie terminy i brak kolejek</p>
+                                    </div>
+                                    <div class="flex items-center hover-effect p-2 rounded">
+                                        <i class="fas fa-calendar-alt text-secondary mr-3 text-2xl"></i>
+                                        <p>Elastyczne godziny pracy, także w weekendy</p>
+                                    </div>
+                                    <div class="flex items-center hover-effect p-2 rounded">
+                                        <i class="fas fa-microscope text-secondary mr-3 text-2xl"></i>
+                                        <p>Nowoczesny sprzęt medyczny</p>
+                                    </div>
+                                    <div class="flex items-center hover-effect p-2 rounded">
+                                        <i class="fas fa-users text-secondary mr-3 text-2xl"></i>
+                                        <p>Profesjonalny i przyjazny personel</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="faq" class="bg-gray-50 py-20 fade-in snap-start content-section">
+                    <div class="container mx-auto px-4">
+                        <h2 class="text-4xl font-bold text-center text-gray-800 mb-12">Często Zadawane Pytania</h2>
+                        <div class="space-y-4">
+                            <div class="collapse bg-base-100 shadow-lg rounded-box faq-item hover-effect">
+                                <input type="radio" name="my-accordion-3" checked="checked" /> 
+                                <div class="collapse-title text-xl font-medium flex items-center justify-between">
+                                    <span>Czy wykonujecie badania w weekendy?</span>
+                                    <i class="fas fa-chevron-down text-primary"></i>
+                                </div>
+                                <div class="collapse-content"> 
+                                    <p>Tak, oferujemy badania również w weekendy. Nasz elastyczny harmonogram pozwala na dostosowanie się do potrzeb naszych klientów. Skontaktuj się z nami, aby umówić termin dogodny dla Ciebie lub Twoich pracowników.</p>
+                                </div>
+                            </div>
+                            <div class="collapse bg-base-100 shadow-lg rounded-box faq-item hover-effect">
+                                <input type="radio" name="my-accordion-3" /> 
+                                <div class="collapse-title text-xl font-medium flex items-center justify-between">
+                                    <span>Czy oferujecie konsultacje online?</span>
+                                    <i class="fas fa-chevron-down text-primary"></i>
+                                </div>
+                                <div class="collapse-content"> 
+                                    <p>Tak, oferujemy konsultacje online dla wybranych usług. Jest to wygodna opcja dla wstępnych konsultacji lub follow-up'ów. Jednakże, niektóre badania wymagają osobistej wizyty w naszej placówce. Skontaktuj się z nami, aby dowiedzieć się więcej o możliwościach konsultacji online.</p>
+                                </div>
+                            </div>
+                            <div class="collapse bg-base-100 shadow-lg rounded-box faq-item hover-effect">
+                                <input type="radio" name="my-accordion-3" /> 
+                                <div class="collapse-title text-xl font-medium flex items-center justify-between">
+                                    <span>Czy można umówić wizytę dla grupy pracowników?</span>
+                                    <i class="fas fa-chevron-down text-primary"></i>
+                                </div>
+                                <div class="collapse-content"> 
+                                    <p>Oczywiście! Specjalizujemy się w obsłudze firm i oferujemy możliwość umówienia wizyt dla grup pracowników. Możemy dostosować harmonogram badań do potrzeb Twojej firmy, minimalizując czas nieobecności pracowników w pracy. Skontaktuj się z nami, aby omówić szczegóły i zaplanować wizyty grupowe.</p>
+                                </div>
+                            </div>
+                            <div class="collapse bg-base-100 shadow-lg rounded-box faq-item hover-effect">
+                                <input type="radio" name="my-accordion-3" /> 
+                                <div class="collapse-title text-xl font-medium flex items-center justify-between">
+                                    <span>Jakie dokumenty są potrzebne do badania?</span>
+                                    <i class="fas fa-chevron-down text-primary"></i>
+                                </div>
+                                <div class="collapse-content"> 
+                                    <p>Do badania potrzebne są: dowód osobisty, skierowanie od pracodawcy (w przypadku badań wstępnych, okresowych lub kontrolnych), oraz dokumentacja medyczna z wcześniejszych badań, jeśli jest dostępna. W przypadku badań specjalistycznych mogą być wymagane dodatkowe dokumenty, o czym poinformujemy podczas umawiania wizyty.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <footer id="kontakt" class="bg-gray-800 text-white py-20 fade-in snap-end min-h-screen flex items-center justify-center">
+                    <div class="container mx-auto px-4">
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                            <div>
+                                <h3 class="text-2xl font-bold mb-4">Centrum-MED</h3>
+                                <p>Profesjonalna medycyna pracy dla Twojej firmy.</p>
+                                <div class="mt-4 flex space-x-4">
+                                    <a href="#" class="text-white hover:text-primary hover-effect"><i class="fab fa-facebook-f"></i></a>
+                                    <a href="#" class="text-white hover:text-primary hover-effect"><i class="fab fa-twitter"></i></a>
+                                    <a href="#" class="text-white hover:text-primary hover-effect"><i class="fab fa-linkedin-in"></i></a>
+                                    <a href="#" class="text-white hover:text-primary hover-effect"><i class="fab fa-instagram"></i></a>
+                                </div>
+                            </div>
+                            <div>
+                                <h4 class="text-xl font-semibold mb-4">Szybki Kontakt</h4>
+                                <p>Telefon: +48 603 442 848</p>
+                                <p>Email: biuro@centrum-med.pl</p>
+                            </div>
+                            <div>
+                                <h4 class="text-xl font-semibold mb-4">Na skróty</h4>
+                                <ul class="space-y-2">
+                                    <li><a href="#home" class="hover:text-primary hover-effect">Strona Główna</a></li>
+                                    <li><a href="#uslugi" class="hover:text-primary hover-effect">Usługi</a></li>
+                                    <li><a href="#klienci" class="hover:text-primary hover-effect">Klienci</a></li>
+                                    <li><a href="#o-nas" class="hover:text-primary hover-effect">O Nas</a></li>
+                                    <li><a href="#faq" class="hover:text-primary hover-effect">FAQ</a></li>
+                                </ul>
+                            </div>
+                            <div>
+                                <h4 class="text-xl font-semibold mb-4">Newsletter</h4>
+                                <form>
+                                    <div class="form-control">
+                                        <label class="label">
+                                            <span class="label-text text-white">Zapisz się do newslettera</span>
+                                        </label>
+                                        <div class="relative">
+                                            <input type="email" placeholder="twój@email.com" class="input input-bordered w-full pr-16" /> 
+                                            <button class="btn btn-primary absolute top-0 right-0 rounded-l-none hover-effect">Zapisz</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                        <div class="mt-12 text-center">
+                            <p>&copy; 2023 CENTRUM BADAŃ Anna Jezierska, Patrycja Lewicz Spółka Cywilna. Wszelkie prawa zastrzeżone.</p>
+                        </div>
+                    </div>
+                </footer>
+            </div>
+        </div> 
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Proste liczniki bez zewnętrznej biblioteki
+    function simpleCounter(elementId, target, duration = 2000) {
+        const element = document.getElementById(elementId);
+        const start = 0;
+        const increment = target / (duration / 16);
+        let current = start;
+        
+        const timer = setInterval(() => {
+            current += increment;
+            if (current >= target) {
+                element.textContent = Math.round(target);
+                clearInterval(timer);
+            } else {
+                element.textContent = Math.round(current);
+            }
+        }, 16);
+    }
+
+    // Inicjalizacja liczników
+    simpleCounter('years-count', 21);
+    simpleCounter('doctors-count', 19);
+    simpleCounter('clients-count', 5000);
+
+    // Inicjalizacja Swiper
+    const swiper = new Swiper('.swiper-container', {
+        slidesPerView: 1,
+        spaceBetween: 30,
+        centeredSlides: true,
+        loop: true,
+        autoplay: {
+            delay: 3000,
+            disableOnInteraction: false,
+        },
+        pagination: {
+            el: '.swiper-pagination',
+            clickable: true,
+        },
+        navigation: {
+            nextEl: '.swiper-button-next',
+            prevEl: '.swiper-button-prev',
+        },
+        breakpoints: {
+            640: {
+                slidesPerView: 2,
+            },
+            1024: {
+                slidesPerView: 3,
+            }
+        }
+    });
+
+    // Efekty przewijania
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+                observer.unobserve(entry.target);
+            }
+        });
+    }, {
+        threshold: 0.1,
+        rootMargin: "0px 0px -50px 0px"
+    });
+
+    document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+    // System powiadomień
+    function showNotification(message) {
+        const notificationEl = document.getElementById('activity-notification');
+        const textEl = document.getElementById('notification-text');
+        if (notificationEl && textEl) {
+            textEl.textContent = message;
+            notificationEl.classList.add('show');
+            
+            setTimeout(() => {
+                notificationEl.classList.remove('show');
+            }, 5000);
+        }
+    }
+
+    // Automatyczne powiadomienia
+    const notifications = [
+        "🏃 Ktoś właśnie umówił wizytę",
+        "👥 8 osób przegląda tę stronę",
+        "⭐ Nowa 5-gwiazdkowa opinia",
+        "🎉 Ostatnie wolne terminy na ten tydzień!"
+    ];
+
+    setInterval(() => {
+        const notification = notifications[Math.floor(Math.random() * notifications.length)];
+        showNotification(notification);
+    }, 15000);
+
+    // Licznik czasu
+    function updateCountdown() {
+        const now = new Date();
+        const end = new Date();
+        end.setHours(23, 59, 59, 999);
+        
+        const diff = end - now;
+        const hours = Math.floor(diff / (1000 * 60 * 60));
+        const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+        
+        const countdownEl = document.getElementById('countdown');
+        if (countdownEl) {
+            countdownEl.textContent = `${hours}:${minutes < 10 ? '0' : ''}${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+        }
+    }
+
+    updateCountdown();
+    setInterval(updateCountdown, 1000);
+
+    // Obsługa formularza
+    const form = document.getElementById('registration-form');
+    if (form) {
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            showNotification("✅ Formularz został wysłany! Oddzwonimy wkrótce.");
+        });
+    }
+
+    // Pasek postępu czytania
+    window.addEventListener('scroll', function() {
+        const winScroll = document.documentElement.scrollTop;
+        const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+        const scrolled = (winScroll / height) * 100;
+        const readingBar = document.getElementById("reading-bar");
+        if (readingBar) {
+            readingBar.style.width = scrolled + "%";
+        }
+    });
+});
+</script>
+</body>
+</html>
